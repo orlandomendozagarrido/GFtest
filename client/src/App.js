@@ -1,6 +1,8 @@
 import React, { Component } from 'react'
 import L from 'leaflet';
 import { Map, TileLayer, Marker, Popup } from 'react-leaflet';
+
+import { Card, Button, CardTitle, CardText, Form, FormGroup, Label, Input } from 'reactstrap';
 import './App.css';
 
 var myIcon = L.icon({
@@ -20,6 +22,10 @@ class App extends Component {
   },
   haveUsersLocation: false,
   zoom: 2,
+  userMessage: {
+    name: '',
+    message: ''
+  }
   }
   componentDidMount() {
     navigator.geolocation.getCurrentPosition((position)=> {
@@ -46,15 +52,28 @@ class App extends Component {
 
            },
            haveUsersLocation: true,
-           zoom: 13,
+           zoom: 10,
         });
      });
-
-});
+   });
+  }
+  formSubmitted = (event) => {
+    event.preventDefault();
+    console.log(this.state.userMessage)
+  }
+  valueChanged = (event) => {
+    const { name, value } = event.target;
+    this.setState((prevState) => ({
+       userMessage: {
+         ...prevState.userMessage,
+         [name]: value
+       }
+    }))
   }
   render(){
     const position = [this.state.location.lat, this.state.location.lng]
   return (
+    <div className="map">
     <Map className="map"center={position} zoom={this.state.zoom}>
           <TileLayer
             attribution='&amp;copy <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
@@ -74,6 +93,33 @@ class App extends Component {
         }
 
         </Map>
+        <Card body className="message-form">
+       <CardTitle>Welcome to Tech Map</CardTitle>
+       <CardText>Leave a Message with your location.</CardText>
+       <CardText>Thanks for stopping by.</CardText>
+         <Form onSubmit={this.formSubmitted}>
+         <FormGroup>
+           <Label for="name">Name</Label>
+           <Input
+              onChange={this.valueChanged}
+              type="text"
+              name="name"
+              id="name"
+              placeholder="Enter your name" />
+         </FormGroup>
+         <FormGroup>
+           <Label for="message">Message</Label>
+           <Input
+             onChange={this.valueChanged}
+             type="textarea"
+             name="Message"
+             id="Message"
+             placeholder="Enter your Message" />
+         </FormGroup>
+         <Button type="submit" color="info" disabled={this.state.hasUsersLocation}>Send</Button>
+        </Form>
+     </Card>
+   </div>
   );
 }
 }
