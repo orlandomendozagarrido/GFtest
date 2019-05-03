@@ -5,18 +5,22 @@ const messages = db.get('messages');
 const router = express.Router();
 
 const schema = Joi.object().keys({
-    username: Joi.string().alphanum().min(3).max(100).required(),
-    message: Joi.string().alphanum().min(3).max(100).required(),
-    latitude: Joi.number().min(-90).max(90).required();
-    longitude: Joi.number().min(-180).max(180).required();
+    username: Joi.string().regex(/^[a-zA-Z0-9 ]{1,100}$/).required(),
+    message: Joi.string().min(3).max(100).required(),
+    latitude: Joi.number().min(-90).max(90).required(),
+    longitude: Joi.number().min(-180).max(180).required()
 
 });
 
 
 router.get('/', (req, res) => {
-  res.json([]);
+  messages
+  .findAll()
+  .then(allMessages => {
+    res.json(allMessages);
+  })
 });
-router.POST('/', (req, res, next) => {
+router.post('/', (req, res, next) => {
   const result = Joi.validate(req.body, schema);
   if(result.error === null){
     const { name, message, latitude, longitude } = req.body;
