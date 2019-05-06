@@ -86,7 +86,7 @@ class App extends Component {
             icon={myIcon}>
 
             <Popup>
-              A popup. <br /> need to add more info lol.
+              Code WAR!. <br /> I challenge you!.
             </Popup>
           </Marker> : ''
 

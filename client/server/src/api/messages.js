@@ -2,7 +2,7 @@ const express = require('express');
 const Joi = require('@hapi/joi');
 const db = require('../db')
 const messages = db.get('messages');
-const router = express.Router();
+
 
 const schema = Joi.object().keys({
     username: Joi.string().regex(/^[a-zA-Z0-9 ]{1,100}$/).required(),
@@ -12,13 +12,14 @@ const schema = Joi.object().keys({
 
 });
 
+const router = express.Router();
 
 router.get('/', (req, res) => {
   messages
-  .findAll()
+  .find()
   .then(allMessages => {
     res.json(allMessages);
-  })
+  });
 });
 router.post('/', (req, res, next) => {
   const result = Joi.validate(req.body, schema);
@@ -30,7 +31,7 @@ router.post('/', (req, res, next) => {
       latitude,
       longitude,
       date: new Date()
-    }
+    };
   messages
   .insert(userMessage)
   .then(insertedMessage => {
